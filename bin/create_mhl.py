@@ -47,7 +47,7 @@ def compile_and_cleanup_mhl(directory):
                     individual_mhl_path = os.path.join(root, file)
                     with open(individual_mhl_path, 'r') as individual_mhl:
                         master_mhl.write(individual_mhl.read() + "\n\n")
-                    os.remove(individual_mhl_path)  # Remove the individual MHL file
+                    os.remove(individual_mhl_path)
 
 def main(master_path, target_path, hash_option):
     script_directory = os.path.dirname(os.path.abspath(__file__))
