@@ -19,6 +19,6 @@ This will start the menu where you can interact with the tool. Either follow eac
 ## Installation
 
 Start by cloning the repository and installing Python 3.x if not already installed:
-`git clone https://github.com/yourusername/mhl-sync-utility.git`
+`git clone https://github.com/rozza591/MHL-Sync-Utility.git`
 `cd mhl-sync-utility`
 
