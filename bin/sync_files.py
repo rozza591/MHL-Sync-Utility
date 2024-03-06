@@ -6,27 +6,22 @@ def sync_files_to_target(comparison_results_path, master_dir, target_dir):
     Sync files listed in the comparison results to the target directory,
     preserving the original directory structure under a new 'from_master' folder.
     """
-    # Define the directory to sync files into within the target directory
     target_sync_dir = os.path.join(target_dir, "from_master")
 
     with open(comparison_results_path, 'r') as file:
         for line in file:
             file_path = line.strip()
             if file_path:
-                # Calculate relative path
                 relative_path = os.path.relpath(file_path, master_dir)
                 target_file_path = os.path.join(target_sync_dir, relative_path)
 
-                # Ensure the target directory exists
                 os.makedirs(os.path.dirname(target_file_path), exist_ok=True)
 
-                # Copy file from master to target, retaining the folder structure
                 shutil.copy2(file_path, target_file_path)
                 print(f"Synced: {file_path} to {target_file_path}")
 
     print("Syncing complete.")
 
-# The script can still be used as a standalone tool if needed
 if __name__ == "__main__":
     import argparse
 
