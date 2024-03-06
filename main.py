@@ -59,19 +59,15 @@ def run_create_mhls():
         if not master_mhl_file or not target_mhl_file:
             print("Error: Could not find MHL files for comparison.")
             return
-
-        # Call run_compare_mhls with the paths of the created MHL files
         run_compare_mhls(manual_paths=False, master_mhl_path=master_mhl_file, target_mhl_path=target_mhl_file)
 
 def run_compare_mhls(manual_paths=True, master_mhl_path=None, target_mhl_path=None):
-    global target_directory_path  # Ensure this global variable is defined elsewhere in your script
+    global target_directory_path
 
     if manual_paths:
-        # Ask for paths if running in manual mode
         master_mhl_path = input("Enter the path to the master MHL file: ")
         target_mhl_path = input("Enter the path to the target MHL file: ")
     else:
-        # When paths are provided, ensure they're used directly
         if not master_mhl_path or not target_mhl_path:
             print("MHL file paths must be provided for automatic comparison.")
             return
@@ -79,10 +75,8 @@ def run_compare_mhls(manual_paths=True, master_mhl_path=None, target_mhl_path=No
     output_file_name = "comparison_results.txt"
     comparison_results_path = os.path.join(target_directory_path, output_file_name)
 
-    # Construct the path to the compare.py script
     compare_script_path = os.path.join(os.path.dirname(__file__), 'bin', 'compare.py')
 
-    # Execute the comparison script as a subprocess using named arguments for the paths
     command = [
         'python3', compare_script_path,
         '--master_mhl_path', master_mhl_path,
@@ -96,30 +90,25 @@ def run_compare_mhls(manual_paths=True, master_mhl_path=None, target_mhl_path=No
     except subprocess.CalledProcessError as e:
         print(f"An error occurred during comparison: {e}")
 
-    # Option after comparison for syncing
     print("\nDo you want to sync the files now?")
     print("1. Yes")
     print("2. No, return to main menu")
     sync_choice = input("Enter your choice (1 or 2): ")
     if sync_choice == '1':
-        # Proceed with syncing using the generated comparison_results.txt
         run_sync_mhls(comparison_results_path=comparison_results_path)
 
 
 
 def run_sync_mhls(comparison_results_path=None):
     if comparison_results_path is None:
-        # Manual mode: ask for the comparison results file path
         comparison_results_path = input("Enter the path to the comparison results file: ")
     
     if not os.path.exists(comparison_results_path):
         print("Error: Comparison results file does not exist.")
         return
 
-    # Construct the path to the sync_files.py script
     sync_script_path = os.path.join(os.path.dirname(__file__), 'bin', 'sync_files.py')
 
-    # Call the sync_files.py script as a subprocess
     subprocess.run(['python3', sync_script_path, comparison_results_path, master_directory_path, target_directory_path], check=True)
     print("Syncing complete. Files have been synchronized to the target directory.")
 
