@@ -9,8 +9,12 @@ def run_mhl_tool_for_directory(directory, hash_option, script_directory, output_
     Use the MHL tool to generate MHL files for the entire directory.
     """
     print(f"Generating MHLs for directory: {directory} using {hash_option}")
+    
+    # Correctly construct the path to the MHL tool located in the same 'bin' directory as this script
+    mhl_tool_path = os.path.join(script_directory, 'mhl')
+
     command = [
-        'mhl', 'seal', '-t', hash_option, 
+        mhl_tool_path, 'seal', '-t', hash_option, 
         '--output-folder', output_directory, directory
     ]
 
