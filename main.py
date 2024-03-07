@@ -3,7 +3,7 @@ import os
 import glob
 import logging
 
-logging.basicConfig(filename='application.log', level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(filename='mhl-sync-log.log', level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logging.info("Application started.")
 
 def menu():
