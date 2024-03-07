@@ -5,13 +5,17 @@ import logging
 from datetime import datetime
 import xml.etree.ElementTree as ET
 
-logging.basicConfig(filename='mhl_process.log', level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s', handlers=[logging.FileHandler("mhl_process.log"), logging.StreamHandler(sys.stdout)])
+logging.basicConfig(level=logging.INFO, 
+                    format='%(asctime)s - %(levelname)s - %(message)s',
+                    handlers=[
+                        logging.FileHandler("mhl_process.log"),
+                        logging.StreamHandler(sys.stdout)
+                    ])
 
 def run_mhl_tool_for_directory(directory, hash_option, script_directory, output_directory):
     logging.info(f"Generating MHLs for directory: {directory} using {hash_option}")
 
     mhl_tool_path = os.path.join(script_directory, 'mhl')
-
     command = [
         mhl_tool_path, 'seal', '-t', hash_option, 
         '--output-folder', output_directory, directory
@@ -23,7 +27,6 @@ def run_mhl_tool_for_directory(directory, hash_option, script_directory, output_
     except subprocess.CalledProcessError as e:
         logging.error(f"Failed to generate MHLs for {directory} with error: {e.stderr}")
         sys.exit(f"Error generating MHLs for directory: {directory}. Check mhl_process.log for details.")
-
 def update_mhl_entries_with_full_path(directory):
     logging.info(f"Updating MHL entries with full paths in directory: {directory}")
 
