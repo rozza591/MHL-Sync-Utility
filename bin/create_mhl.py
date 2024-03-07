@@ -5,12 +5,10 @@ import logging
 from datetime import datetime
 import xml.etree.ElementTree as ET
 
-# Initialize logging
-logging.basicConfig(filename='mhl_process.log', level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(filename='mhl_process.log', level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s', handlers=[logging.FileHandler("mhl_process.log"), logging.StreamHandler(sys.stdout)])
 
 def run_mhl_tool_for_directory(directory, hash_option, script_directory, output_directory):
     logging.info(f"Generating MHLs for directory: {directory} using {hash_option}")
-    print(f"Generating MHLs for directory: {directory} using {hash_option}")
 
     mhl_tool_path = os.path.join(script_directory, 'mhl')
 
@@ -20,10 +18,11 @@ def run_mhl_tool_for_directory(directory, hash_option, script_directory, output_
     ]
 
     try:
-        subprocess.run(command, check=True, cwd=script_directory)
+        result = subprocess.run(command, check=True, cwd=script_directory, text=True, capture_output=True)
+        logging.info(f"MHL generation output for {directory}: {result.stdout}")
     except subprocess.CalledProcessError as e:
-        logging.error(f"Failed to generate MHLs for {directory} with error: {e}")
-        sys.exit(f"Error generating MHLs for directory: {directory}")
+        logging.error(f"Failed to generate MHLs for {directory} with error: {e.stderr}")
+        sys.exit(f"Error generating MHLs for directory: {directory}. Check mhl_process.log for details.")
 
 def update_mhl_entries_with_full_path(directory):
     logging.info(f"Updating MHL entries with full paths in directory: {directory}")
