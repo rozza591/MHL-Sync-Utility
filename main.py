@@ -6,6 +6,11 @@ import logging
 logging.basicConfig(filename='mhl-sync-log.log', level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logging.info("Application started.")
 
+paths = {
+    'master_directory_path': '',
+    'target_directory_path': ''
+}
+
 def menu():
     logging.info("Displaying menu.")
     print("\nSelect an operation to perform:")
@@ -46,14 +51,12 @@ def run_create_mhls():
         print("Invalid choice. Please select a valid option.")
         return
 
-    global master_directory_path
-    global target_directory_path
-    master_directory_path = input("Enter the master directory path: ")
-    target_directory_path = input("Enter the target directory path: ")
+    paths['master_directory_path'] = input("Enter the master directory path: ")
+    paths['target_directory_path'] = input("Enter the target directory path: ")
     
     create_mhl_script_path = os.path.join(os.path.dirname(__file__), 'bin', 'create_mhl.py')
     try:
-        subprocess.run(['python3', create_mhl_script_path, master_directory_path, target_directory_path, selected_algorithm], check=True)
+        subprocess.run(['python3', create_mhl_script_path, paths['master_directory_path'], paths['target_directory_path'], selected_algorithm], check=True)
         logging.info("MHL creation completed successfully.")
     except subprocess.CalledProcessError as e:
         logging.error(f"Error during MHL creation: {e}")
@@ -67,8 +70,8 @@ def run_create_mhls():
     if post_choice == '1':
         return
     elif post_choice == '2':
-        master_mhl_file = find_latest_mhl_file(master_directory_path)
-        target_mhl_file = find_latest_mhl_file(target_directory_path)
+        master_mhl_file = find_latest_mhl_file(paths['master_directory_path'])
+        target_mhl_file = find_latest_mhl_file(paths['target_directory_path'])
         
         if not master_mhl_file or not target_mhl_file:
             print("Error: Could not find MHL files for comparison.")
@@ -77,8 +80,6 @@ def run_create_mhls():
 
 def run_compare_mhls(manual_paths=True, master_mhl_path=None, target_mhl_path=None):
     logging.info("Running compare MHLs process.")
-    global target_directory_path
-
     if manual_paths:
         master_mhl_path = input("Enter the path to the master MHL file: ")
         target_mhl_path = input("Enter the path to the target MHL file: ")
@@ -88,7 +89,7 @@ def run_compare_mhls(manual_paths=True, master_mhl_path=None, target_mhl_path=No
             return
     
     output_file_name = "comparison_results.txt"
-    comparison_results_path = os.path.join(target_directory_path, output_file_name)
+    comparison_results_path = os.path.join(paths['target_directory_path'], output_file_name)
 
     compare_script_path = os.path.join(os.path.dirname(__file__), 'bin', 'compare.py')
 
@@ -114,8 +115,6 @@ def run_compare_mhls(manual_paths=True, master_mhl_path=None, target_mhl_path=No
     if sync_choice == '1':
         run_sync_mhls(comparison_results_path=comparison_results_path)
 
-
-
 def run_sync_mhls(comparison_results_path=None):
     logging.info("Running sync MHLs process.")
     if comparison_results_path is None:
@@ -128,12 +127,11 @@ def run_sync_mhls(comparison_results_path=None):
     sync_script_path = os.path.join(os.path.dirname(__file__), 'bin', 'sync_files.py')
 
     try:
-        subprocess.run(['python3', sync_script_path, comparison_results_path, master_directory_path, target_directory_path], check=True)
+        subprocess.run(['python3', sync_script_path, comparison_results_path, paths['master_directory_path'], paths['target_directory_path']], check=True)
         logging.info("Syncing completed successfully.")
     except subprocess.CalledProcessError as e:
         logging.error(f"Error during syncing: {e}")
         print(f"Error: {e}")
-
 
 def main():
     logging.info("Entering main loop.")
